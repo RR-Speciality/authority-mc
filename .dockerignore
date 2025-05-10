@@ -1,7 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Python
 __pycache__/
 *.pyc
-.env
+*.pyo
+*.pyd
+.Python
+env/
 venv/
+.env
 *.egg-info/
-build/
 dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Misc
+*.log
+.DS_Store
+README.md

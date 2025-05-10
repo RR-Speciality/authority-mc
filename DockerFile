@@ -4,14 +4,25 @@ FROM python:3.9-slim
 # Set working directory
 WORKDIR /app
 
-# Copy semua file aplikasi
-COPY . /app
+# Copy requirements first untuk memanfaatkan Docker cache
+COPY requirements.txt .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy semua file aplikasi
+COPY . .
+
+# Non-sensitive configuration
+ENV PYTHONUNBUFFERED=1 \
+    FLASK_APP=run.py \
+    FLASK_ENV=production \
+    AWS_REGION=ap-southeast-1 \
+    DYNAMODB_TABLE=users \
+    GOOGLE_DISCOVERY_URL=https://accounts.google.com/.well-known/openid-configuration
+
 # Expose port untuk app
 EXPOSE 5000
 
-# Gunakan gunicorn untuk production
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "run:app"]
+# Gunakan gunicorn untuk production dengan worker yang optimal dan timeout yang lebih lama
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers=4", "--log-level=debug", "app:create_app()"]
